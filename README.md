@@ -10,6 +10,6 @@ uv sync
 quarto render index.qmd
 ```
 
-[Result](./index.html)
+[Result](http://jmbuhr.de/hamilton-test/)
 
 
