@@ -7,5 +7,5 @@ requires-python = ">=3.10"
 dependencies = [
     "ipython>=8.37.0",
     "jupyter>=1.1.1",
-    "sf-hamilton>=1.88.0",
+    "sf-hamilton[visualization]>=1.88.0",
 ]

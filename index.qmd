@@ -45,6 +45,24 @@ for i in range(N):
 
 ## Multiprocessing, Parallelizable, Caching
 
+Pipeline of module.py
+
+```{python}
+dr = (
+    driver.Builder()
+    .with_modules(module)
+    .enable_dynamic_execution(allow_experimental_mode=True)
+    .with_local_executor(executors.SynchronousLocalTaskExecutor())
+    .with_remote_executor(executors.MultiProcessingExecutor(max_tasks=5))
+    .with_cache(recompute=True)
+    .build()
+)
+```
+
+```{python}
+dr.visualize_execution(["result"])
+```
+
 Rebuilding cache
 
 ```{python}
@@ -59,7 +77,6 @@ dr = (
     .build()
 )
 r = dr.execute(["result"])["result"]
-r
 ```
 
 From cache
@@ -76,7 +93,6 @@ dr = (
     .build()
 )
 r = dr.execute(["result"])["result"]
-r
 ```
 
 ## Synchronous executor, Parallelizable, Caching
@@ -95,7 +111,6 @@ dr = (
     .build()
 )
 r = dr.execute(["result"])["result"]
-r
 ```
 
 From cache
@@ -112,7 +127,6 @@ dr = (
     .build()
 )
 r = dr.execute(["result"])["result"]
-r
 ```
 
 ## No Parallelizable, Caching
@@ -128,7 +142,6 @@ dr = (
     .build()
 )
 r = dr.execute(["result"])["result"]
-r
 ```
 
 From cache
@@ -142,7 +155,6 @@ dr = (
     .build()
 )
 r = dr.execute(["result"])["result"]
-r
 ```
 
 
