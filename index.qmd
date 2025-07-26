@@ -1,0 +1,148 @@
+---
+title: "Parallel Caching with Hamilton"
+format: html
+execute:
+  echo: true
+  eval: true
+  warning: false
+  freeze: auto
+---
+
+# Setup
+
+```{python}
+import os
+from module import n, N
+import module
+import module2
+from hamilton import driver
+from hamilton.execution import executors
+```
+
+Code: [module.py](module.py) and [module2.py](module2.py).
+
+# Write example data
+
+```{python}
+#| eval: false
+regenerate = False
+
+if not os.path.exists("data"):
+  os.mkdir("data")
+
+for i in range(N):
+  dir = f"data/{i}"
+  if not os.path.exists(dir):
+    os.mkdir(dir)
+  if not os.path.exists(f"{dir}/data.csv") or regenerate:
+    with open(f"{dir}/data.csv", "w") as f:
+      f.write("x,y\n")
+      l = [f"{i},{j}" for j in range(n)]
+      f.write("\n".join(l))
+```
+
+# Hamilton
+
+## Multiprocessing, Parallelizable, Caching
+
+Rebuilding cache
+
+```{python}
+%%timeit -r1 -n 1
+dr = (
+    driver.Builder()
+    .with_modules(module)
+    .enable_dynamic_execution(allow_experimental_mode=True)
+    .with_local_executor(executors.SynchronousLocalTaskExecutor())
+    .with_remote_executor(executors.MultiProcessingExecutor(max_tasks=5))
+    .with_cache(recompute=True)
+    .build()
+)
+r = dr.execute(["result"])["result"]
+r
+```
+
+From cache
+
+```{python}
+%%timeit -r1 -n 1
+dr = (
+    driver.Builder()
+    .with_modules(module)
+    .enable_dynamic_execution(allow_experimental_mode=True)
+    .with_local_executor(executors.SynchronousLocalTaskExecutor())
+    .with_remote_executor(executors.MultiProcessingExecutor(max_tasks=5))
+    .with_cache()
+    .build()
+)
+r = dr.execute(["result"])["result"]
+r
+```
+
+## Synchronous executor, Parallelizable, Caching
+
+Rebuilding cache
+
+```{python}
+%%timeit -r1 -n 1
+dr = (
+    driver.Builder()
+    .with_modules(module)
+    .enable_dynamic_execution(allow_experimental_mode=True)
+    .with_local_executor(executors.SynchronousLocalTaskExecutor())
+    .with_remote_executor(executors.SynchronousLocalTaskExecutor())
+    .with_cache(recompute=True)
+    .build()
+)
+r = dr.execute(["result"])["result"]
+r
+```
+
+From cache
+
+```{python}
+%%timeit -r1 -n 1
+dr = (
+    driver.Builder()
+    .with_modules(module)
+    .enable_dynamic_execution(allow_experimental_mode=True)
+    .with_local_executor(executors.SynchronousLocalTaskExecutor())
+    .with_remote_executor(executors.SynchronousLocalTaskExecutor())
+    .with_cache()
+    .build()
+)
+r = dr.execute(["result"])["result"]
+r
+```
+
+## No Parallelizable, Caching
+
+Rebuilding cache
+
+```{python}
+%%timeit -r1 -n 1
+dr = (
+    driver.Builder()
+    .with_modules(module2)
+    .with_cache(recompute=True)
+    .build()
+)
+r = dr.execute(["result"])["result"]
+r
+```
+
+From cache
+
+```{python}
+%%timeit -r1 -n 1
+dr = (
+    driver.Builder()
+    .with_modules(module2)
+    .with_cache()
+    .build()
+)
+r = dr.execute(["result"])["result"]
+r
+```
+
+
