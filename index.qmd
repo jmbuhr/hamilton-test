@@ -45,7 +45,7 @@ for i in range(N):
 
 ## Multiprocessing, Parallelizable, Caching
 
-Pipeline of module.py
+Pipeline of [module.py](./module.py)
 
 ```{python}
 dr = (
@@ -66,7 +66,7 @@ dr.visualize_execution(["result"])
 Rebuilding cache
 
 ```{python}
-%%timeit -r1 -n 1
+%%timeit -r1 -n 3
 dr = (
     driver.Builder()
     .with_modules(module)
@@ -82,7 +82,7 @@ r = dr.execute(["result"])["result"]
 From cache
 
 ```{python}
-%%timeit -r1 -n 1
+%%timeit -r1 -n 3
 dr = (
     driver.Builder()
     .with_modules(module)
@@ -100,7 +100,7 @@ r = dr.execute(["result"])["result"]
 Rebuilding cache
 
 ```{python}
-%%timeit -r1 -n 1
+%%timeit -r1 -n 3
 dr = (
     driver.Builder()
     .with_modules(module)
@@ -116,7 +116,7 @@ r = dr.execute(["result"])["result"]
 From cache
 
 ```{python}
-%%timeit -r1 -n 1
+%%timeit -r1 -n 3
 dr = (
     driver.Builder()
     .with_modules(module)
@@ -131,10 +131,23 @@ r = dr.execute(["result"])["result"]
 
 ## No Parallelizable, Caching
 
+
+Pipeline of [module2.py](./module2.py)
+
+```{python}
+dr = (
+    driver.Builder()
+    .with_modules(module2)
+    .with_cache(recompute=True)
+    .build()
+)
+dr.visualize_execution(["result"])
+```
+
 Rebuilding cache
 
 ```{python}
-%%timeit -r1 -n 1
+%%timeit -r1 -n 3
 dr = (
     driver.Builder()
     .with_modules(module2)
@@ -147,7 +160,7 @@ r = dr.execute(["result"])["result"]
 From cache
 
 ```{python}
-%%timeit -r1 -n 1
+%%timeit -r1 -n 3
 dr = (
     driver.Builder()
     .with_modules(module2)
